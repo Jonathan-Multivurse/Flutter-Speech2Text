@@ -64,7 +64,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
 
   final SpeechToText _speech = SpeechToText();
   bool _isListening = false;
-  String _text = 'Press the mic and speak';
+  String _text = '';
   double _confidence = 1.0;
 
   @override
@@ -82,9 +82,9 @@ class _SpeechScreenState extends State<SpeechScreen> {
             'Speech 2 Text',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 20.0,
+              fontSize: 18.0,
               color: Colors.white,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -111,7 +111,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
             padding: const EdgeInsets.only(top: 25.0, bottom: 15.0),
             alignment: Alignment.center,
             child: TextHighlight(
-              text: 'Confidence: ${(_confidence * 100.0).toStringAsFixed(1)}%',
+              text: 'Accuracy: ${(_confidence * 100.0).toStringAsFixed(1)}%',
               words: _highlights,
               textStyle: const TextStyle(
                 fontSize: 16.0,
@@ -122,21 +122,41 @@ class _SpeechScreenState extends State<SpeechScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        reverse: true,
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 100.0),
-          alignment: Alignment.center,
-          child: TextHighlight(
-            text: _text,
-            words: _highlights,
-            textStyle: const TextStyle(
-              fontSize: 20.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w300,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 50),
+            child: Text(
+              'Press the mic and speak',
+              style: TextStyle(
+                fontSize: 20.0,
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 25),
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            height: 250.0,
+            decoration: BoxDecoration(
+                color: Colors.teal[900],
+                borderRadius: BorderRadius.circular(20)),
+            child: TextHighlight(
+              text: _text,
+              words: _highlights,
+              textStyle: const TextStyle(
+                fontSize: 75.0,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -151,6 +171,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
         setState(() => _isListening = true);
         _speech.listen(
           onResult: (val) => setState(() {
+            print(val);
             _text = val.recognizedWords;
             if (val.hasConfidenceRating && val.confidence > 0) {
               _confidence = val.confidence;
